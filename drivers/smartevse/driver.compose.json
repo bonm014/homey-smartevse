@@ -1,0 +1,141 @@
+{
+  "name": {
+    "en": "SmartEVSE",
+    "nl": "SmartEVSE"
+  },
+  "class": "evcharger",
+  "energy": {
+    "evCharger": true,
+    "meterPowerImportedCapability": "meter_power"
+  },
+  "capabilities": [
+    "measure_power",
+    "meter_power",
+    "evcharger_charging_state",
+    "evcharger_charging",
+    "charger_mode",
+    "override_current_a",
+    "override_reset",
+    "plug_status",
+    "charging_state",
+    "session_minutes",
+    "rfid_status",
+    "rfid_last",
+    "rfid_allowed",
+    "rfid_name",
+    "rfid_totals",
+    "alarm_generic"
+  ],
+  "images": {
+    "small": "/drivers/smartevse/assets/images/small.png",
+    "large": "/drivers/smartevse/assets/images/large.png"
+  },
+  "pair": [
+    {
+      "id": "start",
+      "title": {
+        "en": "Connect",
+        "nl": "Verbinden"
+      }
+    },
+    {
+      "id": "done",
+      "template": "done",
+      "title": {
+        "en": "Added",
+        "nl": "Toegevoegd"
+      },
+      "description": {
+        "en": "Your SmartEVSE has been added.",
+        "nl": "Je SmartEVSE is toegevoegd."
+      }
+    }
+  ],
+  "settings": [
+    {
+      "id": "host",
+      "type": "text",
+      "label": {
+        "en": "Host (IP or hostname)",
+        "nl": "Host (IP of hostname)"
+      },
+      "value": ""
+    },
+    {
+      "id": "pollInterval",
+      "type": "number",
+      "label": {
+        "en": "Poll interval (seconds)",
+        "nl": "Poll-interval (seconden)"
+      },
+      "value": 10,
+      "min": 5,
+      "max": 120
+    },
+    {
+      "id": "voltageSingle",
+      "type": "number",
+      "label": {
+        "en": "Voltage single-phase (V)",
+        "nl": "Spanning 1-fase (V)"
+      },
+      "value": 230,
+      "min": 180,
+      "max": 260,
+      "step": 1
+    },
+    {
+      "id": "voltageThreeLL",
+      "type": "number",
+      "label": {
+        "en": "Voltage three-phase L-L (V)",
+        "nl": "Spanning 3-fase L-L (V)"
+      },
+      "value": 400,
+      "min": 340,
+      "max": 440,
+      "step": 1
+    },
+    {
+      "id": "rfidWhitelistJson",
+      "type": "textarea",
+      "label": {
+        "en": "RFID whitelist (JSON)",
+        "nl": "RFID whitelist (JSON)"
+      },
+      "value": "[]"
+    },
+    {
+      "id": "denyUnknownRfid",
+      "type": "checkbox",
+      "label": {
+        "en": "Deny unknown RFID",
+        "nl": "Onbekende RFID weigeren"
+      },
+      "value": true
+    },
+    {
+      "id": "unlockMode",
+      "type": "number",
+      "label": {
+        "en": "Unlock mode (0=OFF,1=NORMAL,2=SOLAR,3=SMART)",
+        "nl": "Unlock mode (0=UIT,1=NORMAAL,2=ZON,3=SLIM)"
+      },
+      "value": 3,
+      "min": 0,
+      "max": 3
+    },
+    {
+      "id": "unlockCurrentA",
+      "type": "number",
+      "label": {
+        "en": "Unlock override current (A, 0=disable)",
+        "nl": "Unlock override-stroom (A, 0=uit)"
+      },
+      "value": 0,
+      "min": 0,
+      "max": 32,
+      "step": 0.1
+    }
+  ]
+}

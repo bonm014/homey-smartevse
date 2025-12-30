@@ -1,0 +1,18 @@
+{
+  "id": "reset_override_current",
+  "title": {
+    "en": "Reset SmartEVSE override current",
+    "nl": "Reset SmartEVSE override-stroom"
+  },
+  "titleFormatted": {
+    "en": "Reset SmartEVSE override current",
+    "nl": "Reset SmartEVSE override-stroom"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=smartevse"
+    }
+  ]
+}

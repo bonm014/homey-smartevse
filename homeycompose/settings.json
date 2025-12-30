@@ -1,0 +1,29 @@
+[
+  {
+    "id": "notifyChargingStarted",
+    "type": "checkbox",
+    "label": {
+      "en": "Notification when charging starts",
+      "nl": "Notificatie als laden start"
+    },
+    "value": true
+  },
+  {
+    "id": "notifyChargingStopped",
+    "type": "checkbox",
+    "label": {
+      "en": "Notification when charging stops",
+      "nl": "Notificatie als laden stopt"
+    },
+    "value": true
+  },
+  {
+    "id": "notifyIncludePower",
+    "type": "checkbox",
+    "label": {
+      "en": "Include power in notifications",
+      "nl": "Vermogen opnemen in notificaties"
+    },
+    "value": true
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "id": "reset_rfid_totals",
+  "title": {
+    "en": "Reset RFID totals",
+    "nl": "Reset RFID totalen"
+  },
+  "titleFormatted": {
+    "en": "Reset RFID totals",
+    "nl": "Reset RFID totalen"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=smartevse"
+    }
+  ]
+}

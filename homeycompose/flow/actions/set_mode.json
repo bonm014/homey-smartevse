@@ -1,0 +1,56 @@
+{
+  "id": "set_mode",
+  "title": {
+    "en": "Set SmartEVSE mode",
+    "nl": "Zet SmartEVSE mode"
+  },
+  "titleFormatted": {
+    "en": "Set SmartEVSE mode to [[mode]]",
+    "nl": "Zet SmartEVSE mode naar [[mode]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=smartevse"
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Mode",
+        "nl": "Mode"
+      },
+      "values": [
+        {
+          "id": "0",
+          "title": {
+            "en": "OFF",
+            "nl": "UIT"
+          }
+        },
+        {
+          "id": "1",
+          "title": {
+            "en": "NORMAL",
+            "nl": "NORMAAL"
+          }
+        },
+        {
+          "id": "2",
+          "title": {
+            "en": "SOLAR",
+            "nl": "ZON"
+          }
+        },
+        {
+          "id": "3",
+          "title": {
+            "en": "SMART",
+            "nl": "SLIM"
+          }
+        }
+      ]
+    }
+  ]
+}

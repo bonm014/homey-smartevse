@@ -1,0 +1,18 @@
+{
+  "id": "reboot",
+  "title": {
+    "en": "Reboot SmartEVSE",
+    "nl": "Herstart SmartEVSE"
+  },
+  "titleFormatted": {
+    "en": "Reboot SmartEVSE",
+    "nl": "Herstart SmartEVSE"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=smartevse"
+    }
+  ]
+}

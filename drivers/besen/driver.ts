@@ -4,7 +4,7 @@ import MyDevice = require('./device');
 type EmEvse = /*unresolved*/ any;
 type EmCommunicator = any;
 
-class EVSEDriver extends Homey.Driver {
+class BESENDriver extends Homey.Driver {
 
   public evses:EmEvse[] = [];
   private evsesFile = 'evses.json';
@@ -26,13 +26,15 @@ class EVSEDriver extends Homey.Driver {
   });
   }
 
-  async event(evse:EmEvse,event:string,homey:EVSEDriver){
+  async event(evse:EmEvse,event:string,homey:BESENDriver){
     homey.log(`EVSE update- ${event}`);
     var info = evse.getInfo();
 
-    let device = homey.getDevice({ id: info.serial, ip: info.ip });
+    try{
+      let device = homey.getDevice({ id: info.serial, ip: info.ip });
 
-    await (device as MyDevice).Update();
+      (device as MyDevice).Update();
+    } catch{}
   }
 
   async onUninit(): Promise<void> {
@@ -70,4 +72,4 @@ class EVSEDriver extends Homey.Driver {
 
 };
 
-export = EVSEDriver
+export = BESENDriver

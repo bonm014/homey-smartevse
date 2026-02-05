@@ -402,3 +402,6 @@ FodyWeavers.xsd
 
 # node_modules
 node_modules
+/.homeycompose
+.homeycompose/app.json
+.homeycompose/app.json

@@ -1,17 +1,17 @@
 import Homey from 'homey';
-import EVSEDriver = require('./driver');
+import BESENDriver = require('./driver');
 
 type EmEvseMetaStates = any;
 
-class MyDevice extends Homey.Device {
+class BESENDevice extends Homey.Device {
 
   private ip:string = "";
   private password:string = "";
   private userid:string="";
   private evse:any = null
 
-  private get d(): EVSEDriver {
-    return this.driver as EVSEDriver;
+  private get d(): BESENDriver {
+    return this.driver as BESENDriver;
   }
 
   private get Communicator() {
@@ -19,9 +19,13 @@ class MyDevice extends Homey.Device {
   }
 
   private get Evse():any {
-    if(this.evse == null)
-      this.evse = this.Communicator.getEvseByIp(this.ip);
-
+    try
+    {
+      if(this.evse == null)
+        this.evse = this.Communicator.getEvseByIp(this.ip);
+    }
+    catch{}
+    
     return this.evse;
   }
 
@@ -29,7 +33,7 @@ class MyDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
-    this.log('MyDevice has been initialized');
+    this.log('BESEN device has been initialized');
 
     this.ip = this.getStoreValue('ip');
     this.password = this.getStoreValue('password');
@@ -84,7 +88,7 @@ class MyDevice extends Homey.Device {
     }
 
     if(metaState == "NOT_LOGGED_IN"){
-      if(this.password =="")
+      if(this.password == "" ||this.password == undefined)
       {
         await this.setUnavailable('Please provide password within the device settings');
       }
@@ -119,7 +123,7 @@ class MyDevice extends Homey.Device {
    * onAdded is called when the user adds the device, called just after pairing.
    */
   async onAdded() {
-    this.log('MyDevice has been added');
+    this.log('BESEN device has been added');
   }
 
   /**
@@ -150,6 +154,8 @@ class MyDevice extends Homey.Device {
       await this.setStoreValue("password", newSettings.password);
       this.password = newSettings.password as string;
     }
+
+    await this.setAvailable();
   }
 
   /**
@@ -158,16 +164,16 @@ class MyDevice extends Homey.Device {
    * @param {string} name The new name
    */
   async onRenamed(name: string) {
-    this.log('MyDevice was renamed');
+    this.log('BESEN device was renamed');
   }
 
   /**
    * onDeleted is called when the user deleted the device.
    */
   async onDeleted() {
-    this.log('MyDevice has been deleted');
+    this.log('BESEN device has been deleted');
   }
 
 };
 
-export = MyDevice
+export = BESENDevice

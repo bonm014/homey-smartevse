@@ -1,0 +1,33 @@
+{
+  "id": "rfid_scanned",
+  "title": {
+    "en": "RFID card scanned",
+    "nl": "RFID kaart gescand"
+  },
+  "tokens": [
+    {
+      "name": "rfid",
+      "type": "string",
+      "title": {
+        "en": "RFID card ID",
+        "nl": "RFID kaart ID"
+      }
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "title": {
+        "en": "Name",
+        "nl": "Naam"
+      }
+    },
+    {
+      "name": "allowed",
+      "type": "boolean",
+      "title": {
+        "en": "Allowed",
+        "nl": "Toegestaan"
+      }
+    }
+  ]
+}

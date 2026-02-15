@@ -8,7 +8,9 @@
     "evcharger_charging_state",
     "meter_power",
     "measure_power",
-    "measure_temperature"
+    "measure_temperature",
+    "override_current_a",
+    "override_reset"
   ],
   "platforms": [
     "local"

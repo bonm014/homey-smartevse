@@ -79,9 +79,66 @@
             }
           }
         ]
+      },
+      {
+        "id": "charger_plugged_in",
+        "title": {
+          "en": "Plugged in",
+          "nl": "Stekker ingestoken"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=besen"
+          }
+        ]
+      },
+      {
+        "id": "charger_plugged_out",
+        "title": {
+          "en": "Plugged out",
+          "nl": "Stekker uitgetrokken"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=besen"
+          }
+        ]
       }
     ],
     "actions": [
+      {
+        "id": "set_override_current",
+        "title": {
+          "en": "Set SmartEVSE override current",
+          "nl": "Zet SmartEVSE override-stroom"
+        },
+        "titleFormatted": {
+          "en": "Set SmartEVSE override current to [[current_a]] A",
+          "nl": "Zet SmartEVSE override-stroom naar [[current_a]] A"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=smartevse|besen"
+          },
+          {
+            "type": "number",
+            "name": "current_a",
+            "title": {
+              "en": "Current (A)",
+              "nl": "Stroom (A)"
+            },
+            "min": 0,
+            "max": 32,
+            "step": 0.1
+          }
+        ]
+      },
       {
         "id": "reboot",
         "title": {
@@ -191,35 +248,6 @@
             ]
           }
         ]
-      },
-      {
-        "id": "set_override_current",
-        "title": {
-          "en": "Set SmartEVSE override current",
-          "nl": "Zet SmartEVSE override-stroom"
-        },
-        "titleFormatted": {
-          "en": "Set SmartEVSE override current to [[current_a]] A",
-          "nl": "Zet SmartEVSE override-stroom naar [[current_a]] A"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=smartevse"
-          },
-          {
-            "type": "number",
-            "name": "current_a",
-            "title": {
-              "en": "Current (A)",
-              "nl": "Stroom (A)"
-            },
-            "min": 0,
-            "max": 32,
-            "step": 0.1
-          }
-        ]
       }
     ]
   },
@@ -234,7 +262,9 @@
         "evcharger_charging_state",
         "meter_power",
         "measure_power",
-        "measure_temperature"
+        "measure_temperature",
+        "override_current_a",
+        "override_reset"
       ],
       "platforms": [
         "local"

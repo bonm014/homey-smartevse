@@ -8,7 +8,12 @@ class BESENDevice extends Homey.Device {
   private ip:string = "";
   private password:string = "";
   private userid:string="";
-  private evse:any = null
+  private evseDevice:any = null
+
+  private charger_plugged_in:any = null;
+  private charger_plugged_out:any = null;
+  
+  private charger_plugged_in_state:boolean = false; 
 
   private get d(): BESENDriver {
     return this.driver as BESENDriver;
@@ -21,12 +26,15 @@ class BESENDevice extends Homey.Device {
   private get Evse():any {
     try
     {
-      if(this.evse == null)
-        this.evse = this.Communicator.getEvseByIp(this.ip);
+      if(this.evseDevice == null)
+      {
+        console.log(`Get EVSE at ip ${this.ip}`);
+        this.evseDevice = this.Communicator.getEvseByIp(this.ip);
+      }
     }
     catch{}
     
-    return this.evse;
+    return this.evseDevice;
   }
 
   /**
@@ -39,19 +47,88 @@ class BESENDevice extends Homey.Device {
     this.password = this.getStoreValue('password');
     this.userid = this.getStoreValue('userid');
 
-    this.registerCapabilityListener('evcharger_charging', this.StartStopCharging.bind(this))
+    if(!this.hasCapability("override_reset"))
+    {
+      this.addCapability("override_reset");
+    }
+
+    if(!this.hasCapability("override_current_a"))
+    {
+      this.addCapability("override_current_a");
+    }
+
+    this.registerCapabilityListener('evcharger_charging', this.StartStopCharging.bind(this));
+
+    this.registerCapabilityListener('override_current_a', async (value) => {
+      await this.setOverrideCurrent(Number(value));
+    });
+
+    this.registerCapabilityListener('override_reset', async (value) => {
+      if (!value) return;
+      await this.resetOverrideCurrent(Boolean(value));
+      await this.setCapabilityValue('override_reset', false).catch(() => {});
+    });
+  }
+
+  async resetOverrideCurrent(reset:boolean){
+    console.log(`Reset limited charge - ${reset}`);
+
+    if(reset) {
+      var info = this.Evse.getInfo();
+      await this.setCapabilityValue('override_current_a', info?.maxElectricity);
+    }
+  }
+  async setOverrideCurrent(currentA:number)
+  {
+    let charger_limit_amp = Math.round(currentA);
+
+    var info = this.Evse.getInfo();
+    charger_limit_amp = Math.min(charger_limit_amp,info?.maxElectricity)
+
+    console.log(`Set limited charge ${charger_limit_amp}`);
+    this.Evse.setMaxElectricity(charger_limit_amp);
+
+    await this.setCapabilityValue('override_current_a', charger_limit_amp);
+  }
+
+  async ChargingState(metaState:string, opts:any = null) {
+    this.log(`Charge state changed - ${metaState} - ${this.charger_plugged_in_state}`);
+
+    if(this.charger_plugged_in_state == false && (metaState == "plugged_in" || metaState == "plugged_in_charging"))
+    {
+      this.charger_plugged_in = this.homey.flow.getDeviceTriggerCard("charger_plugged_in");
+
+      await this.charger_plugged_in.trigger(this);
+      //await this.setAvailable();
+
+      this.charger_plugged_in_state = true;
+      return;
+    }
+
+    if(this.charger_plugged_in_state == true && (metaState == "plugged_out"))
+    {
+      this.charger_plugged_out = this.homey.flow.getDeviceTriggerCard("charger_plugged_out");
+
+      await this.charger_plugged_out.trigger(this);
+      //await this.setUnavailable('Please connect and plug in!');
+      this.charger_plugged_in_state = false;
+      return;
+    }
   }
 
   async StartStopCharging(value:boolean, opts:any) {
     var metaState = this.Evse.getMetaState();
 
     if(metaState != "PLUGGED_IN" && metaState != "CHARGING") {
-      await this.setUnavailable('Please connect and plug in!');
+      //await this.setUnavailable('Please connect and plug in!');
       return;
     }
 
     if(value)
-      this.Evse.chargeStart({"userId":"homey"});
+    {
+      let overridePower:number = await this.getCapabilityValue('override_current_a');
+      this.Evse.chargeStart({"userId":"homey", "maxAmps":overridePower});
+    }
     else
       this.Evse.chargeStop({"userId":"homey"});
   }
@@ -68,6 +145,17 @@ class BESENDevice extends Homey.Device {
     var metaState = this.Evse.getMetaState();
     var charge = this.Evse.getCurrentCharge();
     var state = this.Evse.getState();
+    var info = this.Evse.getInfo();
+
+    
+    if(info?.maxElectricity !== undefined)
+    {
+      let maxCurrentA = await this.getCapabilityValue('override_current_a');
+      if(maxCurrentA == null || maxCurrentA == undefined)
+      {
+        await this.setCapabilityValue('override_current_a', info?.maxElectricity);
+      }
+    }
 
     if(state?.innerTemp !== undefined)
       await this.setCapabilityValue('measure_temperature', state?.innerTemp);
@@ -99,6 +187,8 @@ class BESENDevice extends Homey.Device {
       return;
     }
 
+    await this.setAvailable();
+
     if(metaState == "CHARGING")
     {
       await this.setCapabilityValue('evcharger_charging_state', 'plugged_in_charging');
@@ -117,6 +207,8 @@ class BESENDevice extends Homey.Device {
       else
         await this.setCapabilityValue('evcharger_charging_state', 'plugged_out');
     }
+
+    await this.ChargingState(this.getCapabilityValue('evcharger_charging_state')); 
   }
 
   /**

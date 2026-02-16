@@ -13,18 +13,6 @@
       "args": []
     },
     {
-      "id": "reset_override_current",
-      "title": {
-        "en": "Reset SmartEVSE override current",
-        "nl": "Reset SmartEVSE override-stroom"
-      },
-      "titleFormatted": {
-        "en": "Reset SmartEVSE override current",
-        "nl": "Reset SmartEVSE override-stroom"
-      },
-      "args": []
-    },
-    {
       "id": "reset_rfid_totals",
       "title": {
         "en": "Reset RFID totals",

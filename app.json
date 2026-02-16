@@ -111,6 +111,18 @@
     ],
     "actions": [
       {
+        "id": "reset_override_current",
+        "title": {
+          "en": "Reset SmartEVSE override current",
+          "nl": "Reset SmartEVSE override-stroom"
+        },
+        "titleFormatted": {
+          "en": "Reset SmartEVSE override current",
+          "nl": "Reset SmartEVSE override-stroom"
+        },
+        "args": []
+      },
+      {
         "id": "set_override_current",
         "title": {
           "en": "Set SmartEVSE override current",
@@ -148,24 +160,6 @@
         "titleFormatted": {
           "en": "Reboot SmartEVSE",
           "nl": "Herstart SmartEVSE"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=smartevse"
-          }
-        ]
-      },
-      {
-        "id": "reset_override_current",
-        "title": {
-          "en": "Reset SmartEVSE override current",
-          "nl": "Reset SmartEVSE override-stroom"
-        },
-        "titleFormatted": {
-          "en": "Reset SmartEVSE override current",
-          "nl": "Reset SmartEVSE override-stroom"
         },
         "args": [
           {

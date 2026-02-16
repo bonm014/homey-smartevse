@@ -60,17 +60,17 @@ class BESENDevice extends Homey.Device {
     this.registerCapabilityListener('evcharger_charging', this.StartStopCharging.bind(this));
 
     this.registerCapabilityListener('override_current_a', async (value) => {
-      await this.setOverrideCurrent(Number(value));
+      await this.apiSetOverrideCurrent(Number(value));
     });
 
     this.registerCapabilityListener('override_reset', async (value) => {
-      if (!value) return;
-      await this.resetOverrideCurrent(Boolean(value));
-      await this.setCapabilityValue('override_reset', false).catch(() => {});
+      await this.apiResetOverrideCurrent(Boolean(value));
     });
   }
 
-  async resetOverrideCurrent(reset:boolean){
+  async pollOnceSafe(){}
+
+  async apiResetOverrideCurrent(reset:boolean){
     console.log(`Reset limited charge - ${reset}`);
 
     if(reset) {
@@ -78,7 +78,8 @@ class BESENDevice extends Homey.Device {
       await this.setCapabilityValue('override_current_a', info?.maxElectricity);
     }
   }
-  async setOverrideCurrent(currentA:number)
+
+  async apiSetOverrideCurrent(currentA:number)
   {
     let charger_limit_amp = Math.round(currentA);
 

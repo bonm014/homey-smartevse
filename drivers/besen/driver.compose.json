@@ -9,7 +9,7 @@
     "meter_power",
     "measure_power",
     "measure_temperature",
-    "override_current_a",
+    "power_level",
     "override_reset"
   ],
   "platforms": [

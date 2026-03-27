@@ -28,7 +28,7 @@ class BESENDevice extends Homey.Device {
     {
       if(this.evseDevice == null)
       {
-        console.log(`Get EVSE at ip ${this.ip}`);
+        this.log(`Get EVSE at ip ${this.ip}`);
         this.evseDevice = this.Communicator.getEvseByIp(this.ip);
       }
     }
@@ -52,14 +52,19 @@ class BESENDevice extends Homey.Device {
       this.addCapability("override_reset");
     }
 
-    if(!this.hasCapability("override_current_a"))
+    if(!this.hasCapability("power_level"))
     {
-      this.addCapability("override_current_a");
+      this.addCapability("power_level");
+    }
+
+    if(this.hasCapability("override_current_a"))
+    {
+      this.removeCapability("override_current_a");
     }
 
     this.registerCapabilityListener('evcharger_charging', this.StartStopCharging.bind(this));
 
-    this.registerCapabilityListener('override_current_a', async (value) => {
+    this.registerCapabilityListener('power_level', async (value) => {
       await this.apiSetOverrideCurrent(Number(value));
     });
 
@@ -71,25 +76,39 @@ class BESENDevice extends Homey.Device {
   async pollOnceSafe(){}
 
   async apiResetOverrideCurrent(reset:boolean){
-    console.log(`Reset limited charge - ${reset}`);
+    this.log(`Reset limited charge - ${reset}`);
 
     if(reset) {
       var info = this.Evse.getInfo();
-      await this.setCapabilityValue('override_current_a', info?.maxElectricity);
+      await this.setCapabilityValue('power_level', 1);
     }
   }
 
-  async apiSetOverrideCurrent(currentA:number)
+  async apiSetOverrideCurrent(power_level:number)
   {
-    let charger_limit_amp = Math.round(currentA);
-
+    power_level = Math.min(1,power_level);
+    
     var info = this.Evse.getInfo();
-    charger_limit_amp = Math.min(charger_limit_amp,info?.maxElectricity)
+    this.log(`Max limited charge charger ${info?.maxElectricity}`);
+    this.log(`Power level limited charge ${power_level * 100}%`);
 
-    console.log(`Set limited charge ${charger_limit_amp}`);
+    let charger_limit_amp = info?.maxElectricity * power_level;
+    charger_limit_amp = Math.round(charger_limit_amp);
+
+    if(charger_limit_amp < 6)
+    {
+      this.log(`Charger too low, minimum of 6 amp. Reset power level`);
+      charger_limit_amp = 6;
+    }
+
+    //Recalc the powerlevel due to rounding amps
+    power_level = (1 / info?.maxElectricity) * charger_limit_amp;
+    this.log(`New Power level ${power_level * 100}%`);
+    await this.setCapabilityValue('power_level', power_level);
+
+    //Set new limit charger
+    this.log(`Set limited charge ${charger_limit_amp}`);
     this.Evse.setMaxElectricity(charger_limit_amp);
-
-    await this.setCapabilityValue('override_current_a', charger_limit_amp);
   }
 
   async ChargingState(metaState:string, opts:any = null) {
@@ -127,8 +146,14 @@ class BESENDevice extends Homey.Device {
 
     if(value)
     {
-      let overridePower:number = await this.getCapabilityValue('override_current_a');
-      this.Evse.chargeStart({"userId":"homey", "maxAmps":overridePower});
+      /*
+      var info = this.Evse.getInfo();
+      let power_level = await this.getCapabilityValue('power_level');
+      let maxCurrentA = info?.maxElectricity * (power_level/100);
+      
+      this.Evse.chargeStart({"userId":"homey", "maxAmps":maxCurrentA});
+      */
+      this.Evse.chargeStart();
     }
     else
       this.Evse.chargeStop({"userId":"homey"});
@@ -148,15 +173,19 @@ class BESENDevice extends Homey.Device {
     var state = this.Evse.getState();
     var info = this.Evse.getInfo();
 
-    
+    /*
     if(info?.maxElectricity !== undefined)
     {
-      let maxCurrentA = await this.getCapabilityValue('override_current_a');
+      var info = this.Evse.getInfo();
+      let power_level = await this.getCapabilityValue('power_level');
+      let maxCurrentA = info?.maxElectricity * (power_level/100);
+
       if(maxCurrentA == null || maxCurrentA == undefined)
       {
         await this.setCapabilityValue('override_current_a', info?.maxElectricity);
       }
     }
+    */
 
     if(state?.innerTemp !== undefined)
       await this.setCapabilityValue('measure_temperature', state?.innerTemp);
